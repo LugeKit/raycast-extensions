@@ -2,9 +2,13 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "simpler-timer",
   "title": "Simpler Timer",
-  "description": "Set timer for your job and use notification to alarm",
+  "description": "Set a timer and receive a notification when it ends.",
   "icon": "extension-icon.png",
   "author": "LugeK1t",
+  "categories": [
+    "Productivity",
+    "System"
+  ],
   "platforms": [
     "macOS"
   ],

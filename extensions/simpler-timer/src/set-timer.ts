@@ -10,19 +10,20 @@ interface Arguments {
 
 export default async function Command(props: LaunchProps<{ arguments: Arguments }>) {
   const { input } = props.arguments;
-  const regex = /^(\d+)([smh])\s+(.+)$/;
+  const regex = /^(\d+)([smh])(\s+(.+))?$/;
   const match = input.match(regex);
 
   if (!match) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Invalid format",
-      message: "Format: {time} {content} (e.g. 45m Take a break)",
+      message: "Format: {time} [content] (e.g. 45m Take a break)",
     });
     return;
   }
 
-  const [, timeValue, unit, content] = match;
+  const [, timeValue, unit, , contentArg] = match;
+  const content = contentArg || "Timer Done";
   let delayInSeconds = parseInt(timeValue, 10);
 
   if (unit === "m") {
