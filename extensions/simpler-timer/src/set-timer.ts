@@ -37,12 +37,12 @@ export default async function Command(props: LaunchProps<{ arguments: Arguments 
     await preparePrebuilds();
 
     // 2. Escape quotes in content for shell command
-    const safeContent = content.replace(/"/g, '\\"');
+    const safeContent = content.replace(/'/g, "'\\''");
 
     // 3. Construct command
     // Use sh -c to allow chaining sleep and notifier
     // We use nohup or just detached spawn to keep it running
-    const commandString = `sleep ${delayInSeconds} && "${notifierPath}" -title "Simpler Timer" -message "${safeContent}"`;
+    const commandString = `sleep ${delayInSeconds} && "${notifierPath}" -title "Simpler Timer" -message '${safeContent}'`;
 
     const child = spawn(commandString, {
       shell: true,
