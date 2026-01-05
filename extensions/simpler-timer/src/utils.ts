@@ -94,3 +94,48 @@ export function refreshTimers(): TimerTask[] {
   }
   return activeTimers;
 }
+
+export function parseTimerInput(input: string): {
+  durationInSeconds: number;
+  originalTimePart: string;
+  content: string;
+} | null {
+  const trimmedInput = input.trim();
+  // Regex to match the time part.
+  // It matches one or more groups of digits followed by s, m, or h.
+  // It does NOT allow spaces between time units.
+  // Content must be separated by at least one space if present.
+  const timePartRegex = /^((?:\d+[smh])+)(?:\s+(.*))?$/i;
+  const match = trimmedInput.match(timePartRegex);
+
+  if (!match) {
+    return null;
+  }
+
+  const [, timePart, rest] = match;
+
+  let totalSeconds = 0;
+  const unitRegex = /(\d+)([smh])/gi;
+  let unitMatch;
+
+  while ((unitMatch = unitRegex.exec(timePart)) !== null) {
+    const value = parseInt(unitMatch[1], 10);
+    const unit = unitMatch[2].toLowerCase();
+
+    if (unit === "h") {
+      totalSeconds += value * 3600;
+    } else if (unit === "m") {
+      totalSeconds += value * 60;
+    } else if (unit === "s") {
+      totalSeconds += value;
+    }
+  }
+
+  const content = rest ? rest.trim() : "Timer Done";
+
+  return {
+    durationInSeconds: totalSeconds,
+    originalTimePart: timePart.trim(),
+    content: content || "Timer Done",
+  };
+}

@@ -23,6 +23,6 @@ List and manage active timers. Allows you to see the progress of running timers 
 
 ## Screenshots
 
-![Set Timer](media/set_timer.png)
+![Set Timer](metadata/set-timer.png)
 
-![Manage Timers](media/manage_timer.png)
+![Manage Timers](metadata/manage-timers.png)

@@ -1,7 +1,7 @@
 import { showToast, Toast, LaunchProps } from "@raycast/api";
 import { preparePrebuilds, notifierPath } from "raycast-notifier";
 import { spawn } from "child_process";
-import { addTimer } from "./utils";
+import { addTimer, parseTimerInput } from "./utils";
 import { randomUUID } from "crypto";
 
 interface Arguments {
@@ -10,27 +10,19 @@ interface Arguments {
 
 export default async function Command(props: LaunchProps<{ arguments: Arguments }>) {
   const { input } = props.arguments;
-  const regex = /^(\d+)([smh])(\s+(.+))?$/;
-  const match = input.match(regex);
+  const parsed = parseTimerInput(input);
 
-  if (!match) {
+  if (!parsed) {
     await showToast({
       style: Toast.Style.Failure,
       title: "Invalid format",
-      message: "Format: {time} [content] (e.g. 45m Take a break)",
+      message: "Format: {time} [content] (e.g. 1h30m Focus)",
     });
     return;
   }
 
-  const [, timeValue, unit, , contentArg] = match;
-  const content = contentArg || "Timer Done";
-  let delayInSeconds = parseInt(timeValue, 10);
-
-  if (unit === "m") {
-    delayInSeconds *= 60;
-  } else if (unit === "h") {
-    delayInSeconds *= 3600;
-  }
+  const { durationInSeconds, originalTimePart, content } = parsed;
+  const delayInSeconds = durationInSeconds;
 
   try {
     // 1. Prepare environment (ensure executable permissions)
@@ -67,7 +59,7 @@ export default async function Command(props: LaunchProps<{ arguments: Arguments 
     await showToast({
       style: Toast.Style.Success,
       title: "Timer set",
-      message: `Notifying in ${timeValue}${unit}: ${content}`,
+      message: `Notifying in ${originalTimePart}: ${content}`,
     });
   } catch (error) {
     await showToast({
